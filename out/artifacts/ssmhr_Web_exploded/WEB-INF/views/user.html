@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>首页</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <!-- VENDOR CSS -->
+    <link rel="stylesheet" href="assets/vendor/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/vendor/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="assets/vendor/linearicons/style.css">
+    <link rel="stylesheet" href="assets/vendor/chartist/css/chartist-custom.css">
+    <!-- MAIN CSS -->
+    <link rel="stylesheet" href="assets/css/main.css">
+    <!-- FOR DEMO PURPOSES ONLY. You should remove this in your project -->
+    <link rel="stylesheet" href="assets/css/demo.css">
+    <!-- ICONS -->
+    <link rel="apple-touch-icon" sizes="76x76" href="assets/img/apple-icon.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="assets/img/favicon.png">
+</head>
+<body>
+
+
+
+<!--新增模态框-->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+                <h4 class="modal-title" id="myModalLabel">新增User</h4>
+            </div>
+
+
+            <form action="#"  id="myFrom" method="post">
+                <div class="modal-body">
+                    <div align="center">
+                        用户名：<input type="text" id="i_username" style="width: 170px"><br/>
+                        密码：<input type="password" id="i_password" style="width: 170px"><br/>
+                        姓名：<input type="text" id="i_name" style="width: 170px"><br/>
+                        手机：<input type="text" id="i_phone" style="width: 170px"><br/>
+                    </div>
+
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                    <button type="submit" class="btn btn-primary"  id="bt1">提交</button>
+                </div>
+            </form>
+
+
+        </div>
+    </div>
+</div>
+
+<!--更新模态框-->
+<div class="modal fade" id="myModa2" tabindex="-1" role="dialog" aria-labelledby="myModalLabe2">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+                <h4 class="modal-title" id="myModalLabe2">修改User</h4>
+            </div>
+
+
+            <form action="#"  id="myUpdateFrom2" method="post">
+                <div class="modal-body">
+                    <div align="center">
+
+                        id:<input type="text" readOnly="true" name="id" value="" id="rid"/><br/>
+                        用户名：<input type="text" id="u_username" style="width: 170px"><br/>
+                        密码：<input type="password" id="u_password" style="width: 170px"><br/>
+                        姓名：<input type="text" id="u_name" style="width: 170px"><br/>
+                        手机：<input type="text" id="u_phone" style="width: 170px"><br/>
+
+                    </div>
+
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                    <button type="submit" class="btn btn-primary"  id="bt2">提交</button>
+                </div>
+            </form>
+
+
+        </div>
+    </div>
+</div>
+
+<!--新增角色模态框-->
+<div class="modal fade" id="myModa3" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+                <h4 class="modal-title" id="myModalLabe3">新增角色</h4>
+            </div>
+
+
+            <form action="#"  id="myFrom3" method="post">
+                <div class="modal-body">
+                    <div align="center">
+                        ID:<input type="text" readOnly="true" name="id" value="" id="user_id"/><br/>
+                        <select id="irole_id">
+                            <option th:each="role : ${roles}"  th:text="${role.roleName}" th:value="${role.id}" ></option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                    <button type="submit" class="btn btn-primary"  id="bt3">提交</button>
+                </div>
+            </form>
+
+
+        </div>
+    </div>
+</div>
+
+
+<div class="col-md-12">
+    <div class="col-md-2">
+        <form th:action="@{/allUser}" th:method="post">
+            <input type="text" class="form-control" placeholder="姓名模糊查询" th:name="queryKey" id="querykey">
+            <button type="submit" class="btn btn-info"  id="qur" >查询</button>
+        </form>
+
+
+    </div>
+    <!--<button class="btn btn-info"  id="queryButton" >查询</button>-->
+    <span class="col-md-1"></span>
+
+    <button class="btn btn-info" data-toggle="modal" data-target="#myModal">新增</button>
+</div>
+
+<br><br>
+<hr>
+<table  class="table table-striped">
+    <tr align="center"  >
+        <td class="col-md-1"><b>ID</b></td>
+        <td class="col-md-1"><b>用户名</b></td>
+        <td class="col-md-1"><b>姓名</b></td>
+        <td class="col-md-1"><b>手机</b></td>
+        <td class="col-md-1"><b>创建时间</b></td>
+        <td class="col-md-4"><b>角色操作</b></td>
+        <td class="col-md-4"><b>操作</b></td>
+    </tr>
+
+
+        <!--/*@thymesVar id="userList" type="com"*/-->
+        <tr align="center" th:each="user : ${userList}">
+            <td th:text="${user.id}">user.id</td>
+            <td th:text="${user.username}">user.username</td>
+            <td th:text="${user.name}">user.name</td>
+            <td th:text="${user.phone}">user.phone</td>
+            <td th:text="${#dates.format(user.createTime,'yyyy-MM-dd HH:mm:ss')}">user.createTime</td>
+            <td>
+                <select id="role_id">
+                <option th:each="role : ${user.roleList}"  th:text="${role.roleName}" th:value="${role.id}" ></option>
+                </select>
+                <button class="btn btn-info"  th:onclick="'javascript:deleteRole(\''+${user.id}+'\')'">删除角色</button>
+                <button class="btn btn-info" data-toggle="modal" data-target="#myModa3" th:onclick="'javascript:editRole(\''+${user.id}+'\')'">添加角色</button>
+            </td>
+            <!--<td>
+                <button class="btn btn-info" data-toggle="modal" data-target="#myModa3" th:onclick="'javascript:selectRole(\''+${user.id}+'\')'">查看权限</button>
+            </td>-->
+
+            <td>
+                <button class="btn btn-info" data-toggle="modal" data-target="#myModa2" th:onclick="'javascript:editUser(\''+${user.id}+'\')'">修改</button>
+                <button class="btn btn-info" th:onclick="'javascript:deleteUser(\''+${user.id}+'\')'">删除</button>
+            </td>
+        </tr>
+    <form name="f1" method="get" action="/allUser" >
+        <table border="0" align="center" >
+            <tr><!--/*@thymesVar id="page" type="com"*/--><!--/*@thymesVar id="totalpages" type="com"*/-->
+                <td>第<span th:text="${page}"></span>页/共<span th:text="${totalpages}"></span>页<a th:href="@{/allUser(pages=1,queryKey=${queryKey})}">首页</a></td>
+                <td><a th:href="@{/allUser(pages=${page}-1,queryKey=${queryKey})}"> 上一页</a></td>
+                <td><a th:href="@{/allUser(pages=${page}+1,queryKey=${queryKey})}"> 下一页</a></td>
+                <td><a th:href="@{/allUser(pages=${totalpages},queryKey=${queryKey})}">最后一页</a></td>
+                <td>转到第:<input type="text" name="pages" size="8">页
+                    <input type="hidden" name="queryKey" th:value="${queryKey}">
+                    <input type="submit" value="GO" name="cndok"></td>
+            </tr>
+        </table>
+    </form>
+</table>
+<script src="assets/vendor/jquery/jquery.min.js"></script>
+<script src="assets/vendor/bootstrap/js/bootstrap.min.js"></script>
+<script src="assets/vendor/jquery-slimscroll/jquery.slimscroll.min.js"></script>
+<script src="assets/vendor/jquery.easy-pie-chart/jquery.easypiechart.min.js"></script>
+<script src="assets/vendor/chartist/js/chartist.min.js"></script>
+<script src="assets/scripts/klorofil-common.js"></script>
+
+<script>
+    //模态框传值
+    function editUser(id){
+        $("#rid").val(id);
+    }
+    function editRole(id) {
+        $("#user_id").val(id)
+    }
+    //判断模糊查询key值是否为空
+   /* $(document).ready(function () {
+        $("#queryButton").click(function () {
+            var queryKey = $("#querykey").val();
+            $.ajax({
+                url:"/allUser",
+                type:"post",
+                data: {queryKey:queryKey},
+                dataType:'json',
+
+                success:function (result) {
+                    window.location.reload(false);
+                    alert(JSON.stringify(result))
+                }
+            })
+
+        })
+    })*/
+    //修改user
+    $(document).ready(function () {
+        $("#myUpdateFrom2").submit(function () {
+            var id = $("#rid").val();
+            var username = $("#u_username").val();
+            var password = $("#u_password").val();
+            var name = $("#u_name").val();
+            var phone = $("#u_phone").val();
+            $.ajax({
+                url:"/updateUser",
+                type:"post",
+                data: JSON.stringify({id:id,username:username,password:password,name:name,phone:phone}),
+                contentType:'application/json',
+                dataType:'json',
+                success:function (result) {
+                   /* window.close();*/
+                   window.location.reload(false);
+                    alert(JSON.stringify(result))
+
+                }
+            })
+        })
+    })
+
+    ///新增user
+    $(document).ready(function () {
+        $("#myFrom").submit(function () {
+            var username = $("#i_username").val();
+            var password = $("#i_password").val();
+            var name = $("#i_name").val();
+            var phone = $("#i_phone").val();
+            var createTime = new Date();
+            $.ajax({
+                url:"insertUser",
+                type:"post",
+                data: JSON.stringify({username:username,password:password,name:name,phone:phone}),
+                contentType:'application/json',
+                dataType:'json',
+                success:function (result) {
+                    /* window.close();*/
+                    window.location.reload(false);
+                    alert(JSON.stringify(result))
+                }
+            })
+
+
+        })
+    })
+    /*添加用户角色*/
+    $("#myFrom3").submit(function () {
+        var user_id = $("#user_id").val();
+        var role_id = $("#irole_id").val();
+        $.ajax({
+            url:"/insertUserRole",
+            type:"post",
+            data: {user_id:user_id,role_id:role_id},
+            dataType:'json',
+            success:function (result) {
+                window.location.reload(false);
+                alert(JSON.stringify(result))
+            }
+        })
+
+    })
+    //删除user
+    function deleteUser(id) {
+        $.ajax({
+            url:"/deleteUser",
+            type:"post",
+            data: {id:id},
+            dataType:'json',
+            success:function (result) {
+                window.location.reload(false);
+                alert(JSON.stringify(result))
+            }
+        })
+    }
+
+    //删除用户角色
+    function deleteRole(id) {
+        var role_id = $("#role_id").val()
+        $.ajax({
+            url:"/deleteUserRole",
+            type:"post",
+            data: {user_id:id,role_id:role_id},
+            dataType:'json',
+            success:function (result) {
+                window.location.reload(false);
+                alert(JSON.stringify(result))
+            }
+        })
+    }
+    //新增用户权限
+
+
+
+
+
+</script>
+</body>
+</html>

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.neusoft.hr.business.responsitory.TalentDao">
+    <resultMap id="selectTalent" type="com.neusoft.hr.business.entity.Talent">
+        <id column="id" property="id"></id>
+        <result column="name" property="name"></result>
+        <result column="employ_date" property="employDate"></result>
+        <result column="unemploy_date" property="unemployDate"></result>
+        <result column="sexual" property="sexual"></result>
+        <result column="status" property="status"></result>
+        <association  property="department" javaType="com.neusoft.hr.business.entity.Department">
+            <id column="did" property="id"/>
+            <result column="depart_name" property="departName"/>
+            <result column="depart_phone" property="departPhone"/>
+            <result column="depart_type" property="departType"/>
+            <result column="depart_code" property="departCode"/>
+        </association >
+        <association  property="position" javaType="com.neusoft.hr.business.entity.Position">
+            <id column="pid" property="id"/>
+            <result column="pos_code" property="posCode"/>
+            <result column="pos_name" property="posName"/>
+            <result column="pos_salary" property="posSalary"/>
+        </association >
+    </resultMap>
+    <select id="queryAllTalent" resultMap="selectTalent">
+        SELECT t.*,p.id,p.pos_name,p.pos_salary,d.id,d.depart_name,d.depart_phone from talents t
+        LEFT JOIN departments d ON t.depart_id=d.id
+        LEFT JOIN positions p ON t.pos_id=p.id
+        <if test="query!=null and query!=''">
+            where t.name=#{query}
+        </if>
+          limit #{0},#{1};
+    </select>
+    <select id="getTotal" resultType="java.lang.Integer">
+        SELECT count(*) from talents t
+        LEFT JOIN departments d ON t.depart_id=d.id
+        LEFT JOIN positions p ON t.pos_id=p.id
+        <if test="query!=null and query!=''">
+            where t.name=#{query}
+        </if>
+    </select>
+
+    <select id="queryTalentById" resultMap="selectTalent">
+        SELECT * from talents t,positions p,departments d WHERE t.id=#{id} and t.pos_id=p.id and t.depart_id=d.id;
+    </select>
+
+
+    <update id="updateTalent">
+      update talents set name=#{name},sexual=#{sexual},depart_id=#{department.id},pos_id=#{position.id}
+      ,employ_date=#{employDate},unemploy_date=#{unemployDate},status=#{status} where id=#{id};
+    </update>
+</mapper>

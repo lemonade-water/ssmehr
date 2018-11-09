@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.neusoft.hr.business.responsitory.UserDao">
+
+    <resultMap id="selectUser" type="com.neusoft.hr.business.entity.User">
+        <id column="id" property="id"/>
+        <result column="username" property="username"/>
+        <result column="password" property="password"/>
+        <result column="name" property="name"/>
+        <result column="phone" property="phone"/>
+        <result column="create_time" property="createTime"/>
+        <collection property="roleList" ofType="com.neusoft.hr.business.entity.Role">
+            <id column="rid" property="id"/>
+            <result column="role_name" property="roleName"/>
+            <collection property="menuList" ofType="com.neusoft.hr.business.entity.Menu">
+                <id column="mid" property="id"/>
+                <result column="menu_name" property="menuName"/>
+                <result column="url" property="url"/>
+            </collection>
+        </collection>
+    </resultMap>
+
+    <select id="login" resultMap="selectUser">
+      select  u.*,r.id,role_name,m.id,m.menu_name,m.url
+        from users u
+          left join user_role ur on u.id=ur.user_id
+          left join roles r on r.id=ur.role_id
+          left join roles_menus rm on ur.role_id=rm.role_id
+          left join menus m on rm.menu_id=m.id
+          where u.username=#{0} and u.password=#{1} and u.del_flag='0' and r.id=#{2};
+    </select>
+
+    <!--lbf-->
+
+    <sql id="selectColum">
+        id,
+        username,
+        name,
+        phone,
+        create_time as createTime
+    </sql>
+
+
+    <!--自定义User对象的映射关系，通过resultmap实现关联关系的映射 -->
+    <resultMap id="userMap" type="com.neusoft.hr.business.entity.User">
+        <id property="id" column="id"/>
+        <result property="username" column="username"/>
+        <result property="password" column="password"/>
+        <result property="phone" column="phone"/>
+        <result property="name" column="name"/>
+        <result property="createTime" column="create_time"/>
+        <collection property="roleList"  ofType="com.neusoft.hr.business.entity.Role"><!--List中存放的对象类型用ofType描述 -->
+            <id property="id" column="rid"/>
+            <result property="roleName" column="role_name"/>
+        </collection>
+    </resultMap>
+    <select id="find" resultMap="userMap" parameterType="java.lang.Long">
+        <!--SELECT * FROM users WHERE id = ${id}   会产生强行注入sql的风险 $为拼字符串-->
+        select u.id,u.username,u.password,u.del_flag,u.phone,
+        r.id rid,r.role_name,r.del_flag rdf,
+        m.id mid,m.name
+        from users u
+        LEFT JOIN user_role ur ON u.id = ur.user_id
+        LEFT JOIN roles r on r.id=ur.role_id
+        LEFT JOIN roles_menus rm ON r.id = rm.role_id
+        LEFT JOIN menus m ON m.id = rm.menu_id
+        WHERE u.id = #{id}
+    </select>
+    <select id="findList" resultType="com.neusoft.hr.business.entity.User">
+        SELECT
+        <include refid="selectColum"/>
+        FROM users
+        <!-- where username = #{username} and name=#{name}-->
+
+        <where>
+            <if test="username != null and username !=''">
+                and username = #{username}
+            </if>
+
+            <if test="phone !=null and phone!=''">
+                and phone = #{phone}
+            </if>
+        </where>
+    </select>
+    <!-- 查找用户菜单-->
+    <select id="findListMenu" resultType="com.neusoft.hr.business.entity.Menu">
+        select DISTINCT m.url AS url, m.menu_name AS menuName
+        from users u
+        LEFT JOIN user_role ur ON u.id = ur.user_id
+        LEFT JOIN roles r on r.id=ur.role_id
+        LEFT JOIN roles_menus rm ON r.id = rm.role_id
+        LEFT JOIN menus m ON m.id = rm.menu_id
+        WHERE u.id = #{id}
+    </select>
+    <!--用户登录查询-->
+
+    <!-- 查询总数-->
+    <select id="queryCount" resultType="java.lang.Integer">
+        SELECT count(*)   FROM users LEFT JOIN user_role ON users.id = user_role.user_id
+        LEFT JOIN roles on  user_role.role_id=roles.id
+        WHERE users.del_flag = 0
+    </select>
+    <!-- 条件查询总数-->
+    <select id="queryCountByName" resultType="java.lang.Integer">
+        SELECT COUNT(*) FROM users LEFT JOIN user_role ON users.id = user_role.user_id
+        LEFT JOIN roles on  user_role.role_id=roles.id
+        WHERE users.del_flag=0
+        <if test="name!=null and name!=''">
+            AND users.name LIKE "%"#{name}"%"
+        </if>
+    </select>
+    <!-- 分页查询-->
+    <select id="queryAllUser" resultMap="userMap">
+SELECT users.id,users.username,users.name,users.create_time,users.phone,roles.id rid,roles.role_name FROM
+( SELECT * FROM users where users.del_flag = 0 limit #{0},#{1} )
+users LEFT JOIN user_role ON users.id = user_role.user_id LEFT
+JOIN roles on user_role.role_id=roles.id </select>
+
+    <!-- 分页条件查询-->
+
+    <select id="queryAllUserByName" resultMap="userMap">
+    SELECTusers.id,users.username,users.name,users.create_time,users.phone,roles.id rid,roles.role_nameFROM ( SELECT * FROM users limit #{page},#{limit} )usersLEFT JOIN user_role ON users.id = user_role.user_idLEFT JOIN roles on user_role.role_id=roles.idWhere users.del_flag = 0
+    <if test="name!=null and name!=''">AND users.name LIKE "%"#{name}"%" </if>
+
+</select>
+    <!-- 新增user-->
+    <insert id="insert">
+        INSERT INTO users (username,password,name,phone,create_time)
+        VALUES
+         (#{username},#{password},#{name},#{phone},#{createTime})
+    </insert>
+    <!-- 修改User-->
+    <update id="update" parameterType="com.neusoft.hr.business.entity.User">
+        UPDATE users
+        <set>
+            <if test="username!=''and username!=null">
+                username = #{username},
+            </if>
+            <if test="password!=''and password!=null">
+                password  = #{password},
+            </if>
+            <if test="name!=''and name!=null">
+                name  = #{name},
+            </if>
+            <if test="phone!=''and phone!=null">
+                phone  = #{phone},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+    <!-- 删除 将del_flag设置为1-->
+    <delete id="deleteUser">
+        UPDATE users
+        SET del_flag=1
+        WHERE id=#{id}
+    </delete>
+</mapper>

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.neusoft.hr.business.responsitory.UserRoleDao">
+    <insert id="insertUserRole">
+        INSERT INTO user_role (user_id, role_id) VALUES (#{0},#{1})
+    </insert>
+
+    <delete id="deleteUserRole">
+        DELETE FROM user_role WHERE user_id=#{0} AND role_id=#{1}
+    </delete>
+
+    <!-- 查询用户角色-->
+    <select id="findRoles" resultType="com.neusoft.hr.business.entity.Role">
+        SELECT roles.id,roles.role_name AS roleName
+        FROM users LEFT JOIN user_role ON users.id = user_role.user_id
+        LEFT JOIN roles on roles.id = user_role.role_id
+        WHERE users.id = #{id}
+    </select>
+    <!-- 查询所有角色-->
+    <select id="findAllRoles" resultType="com.neusoft.hr.business.entity.Role">
+        SELECT id,role_name AS roleName
+        FROM  roles
+    </select>
+</mapper>

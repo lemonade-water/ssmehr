@@ -1,0 +1,11 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.neusoft.hr.business.responsitory.EmlpoyeeTranformDao">
+
+    <insert id="insertEm">
+        insert into emlpoyee_tranform(in_depart_id,out_depart_id,in_pos_id,out_pos_id,t_id,tran_date) values
+        (#{inDepartId},#{outDepartId},#{inPosId},#{outPosId},#{tId},#{tranDate});
+    </insert>
+    <select id="queryAll" resultType="com.neusoft.hr.business.entity.EmlpoyeeTranform"></select>
+</mapper>

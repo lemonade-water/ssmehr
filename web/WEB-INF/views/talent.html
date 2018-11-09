@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<html>
+<head>
+    <title>人才库</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <!-- VENDOR CSS -->
+    <link rel="stylesheet" href="assets/vendor/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/vendor/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="assets/vendor/linearicons/style.css">
+    <link rel="stylesheet" href="assets/vendor/chartist/css/chartist-custom.css">
+    <!-- MAIN CSS -->
+    <link rel="stylesheet" href="assets/css/main.css">
+    <!-- FOR DEMO PURPOSES ONLY. You should remove this in your project -->
+    <link rel="stylesheet" href="assets/css/demo.css">
+    <!-- ICONS -->
+    <link rel="apple-touch-icon" sizes="76x76" href="assets/img/apple-icon.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="assets/img/favicon.png">
+</head>
+<body>
+<script>
+    //模态框传值
+    function editAddress(id,obj){
+        $("#tid").val(id);
+        var name = $("#"+id).children().eq(2).text();
+        var em = $("#"+id).children().eq(6).text();
+        var un = $("#"+id).children().eq(7).text();
+        $("#updateName").val(name);
+        $("#updateEm").val(em);
+        $("#updateUn").val(un);
+    }
+    //判断模糊查询key值是否为空
+    function tsubmit() {
+        var a=document.getElementById("querykey").value;
+
+        if(a==""){
+            return false;
+        }
+        $("#user_query").attr("href","queryKey.udo?queryKey="+a)
+        return true;
+    }
+
+
+</script>
+
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+                <h4 class="modal-title" id="myModalLabel">新增</h4>
+            </div>
+            <form action=""  id="myFrom" method="post">
+                <div class="modal-body">
+                    <div align="center">
+                        <div class="form-group">
+                            <label for="username">姓名</label>
+                            <input type="text" class="form-control" name="name" id="username" placeholder="姓名">
+                        </div>
+                        <div class="form-group">
+                            <label>性别</label>
+                            <select name="sexual" class="form-control">
+                                <option value="1">男</option>
+                                <option value="2">女</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>部门</label>
+                            <select name="department" class="form-control">
+                                <option th:each="depart:${departs}" th:text="${depart.departName}" th:value="${depart.id}"></option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>岗位</label>
+                            <select name="position" class="form-control">
+                                <option th:each="position:${positions}" th:text="${position.posName}" th:value="${position.id}"></option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>就职时间</label>
+                            <input type="text" name="employ_date" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label>离职时间</label>
+                            <input type="text" name="unemploy_date" class="form-control">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                    <button type="submit" class="btn btn-primary"  id="bt1">提交</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="myModa2" tabindex="-1" role="dialog" aria-labelledby="myModalLabe2">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+                <h4 class="modal-title" id="myModalLabe2">修改</h4>
+            </div>
+            <form action="/updateTalent"  id="myFrom2" method="post">
+                <div class="modal-body">
+                    <div align="center">
+                        <input type="hidden" name="id" value="" id="tid"/>
+                        <div class="form-group">
+                            <label>姓名</label>
+                            <input type="text" class="form-control" id="updateName" name="name" placeholder="姓名">
+                        </div>
+                        <div class="form-group">
+                            <label>性别</label>
+                            <select name="sexual" class="form-control">
+                                <option value="1">男</option>
+                                <option value="2">女</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>部门</label>
+                            <select name="department.id" class="form-control">
+                                <option th:each="depart:${departs}" th:text="${depart.departName}" th:value="${depart.id}"></option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>岗位</label>
+                            <select name="position.id" class="form-control">
+                                <option th:each="position:${positions}" th:text="${position.posName}" th:value="${position.id}"></option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>就职时间</label>
+                            <input type="text" id="updateEm" name="employDate" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label>离职时间</label>
+                            <input type="text" id="updateUn" name="unemployDate" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label>状态</label>
+                            <select name="status" class="form-control">
+                                <option value="0">未入职</option>
+                                <option value="1">入职</option>
+                                <option value="0">离职</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                    <button type="submit" class="btn btn-primary"  id="bt2">提交</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="col-md-12">
+    <form action="/talent" method="get">
+    <div class="col-md-2">
+        <input type="text" name="query" class="form-control" placeholder="查询" id="query-value" th:value="${talentPageBean.query}">
+    </div>
+    <input class="btn btn-info" type="submit">
+
+    </form>
+    <button class="btn btn-info" data-toggle="modal" data-target="#myModal">新增</button>
+</div>
+
+</div>
+<br><br>
+<hr>
+<table  class="table table-striped">
+    <thead>
+    <tr align="center" >
+        <td class="col-md-1"><b>序号</b></td>
+        <td class="col-md-1"><b>编号</b></td>
+        <td class="col-md-1"><b>姓名</b></td>
+        <td class="col-md-1"><b>性别</b></td>
+        <td class="col-md-1"><b>部门</b></td>
+        <td class="col-md-1"><b>岗位</b></td>
+        <td class="col-md-1"><b>入职时间</b></td>
+        <td class="col-md-1"><b>离职时间</b></td>
+        <td class="col-md-1"><b>状态</b></td>
+        <td class="col-md-4"><b>操作</b></td>
+    </tr>
+    </thead>
+    <tbody id="tb" align="center">
+
+    <tr align="center" th:each="list,listState:${talentPageBean.list}" th:id="${list.id}">
+        <td th:text="${talentPageBean.page-1}*5+${listState.count}"></td>
+        <td th:text="${list.id}"></td>
+        <td th:text="${list.name}"></td>
+        <td th:text="${list.sexual}"></td>
+        <td th:text="${list.department.departName}"></td>
+        <td th:text="${list.position.posName}"></td>
+        <td th:text="${#dates.format(list.employDate,'yyyy-MM-dd')}"></td>
+        <td th:text="${#dates.format(list.unemployDate,'yyyy-MM-dd')}"></td>
+        <td th:if="${list.status=='0'}" th:text="未入职"></td>
+        <td th:if="${list.status=='1'}" th:text="入职"></td>
+        <td th:if="${list.status=='2'}" th:text="离职"></td>
+        <td>
+            <button class="btn btn-info" data-toggle="modal" data-target="#myModa2" th:onclick="'javascript:editAddress('+${list.id}+',this)'">修改</button>
+            <a href="delete.tdo?talentid=${talents.id}"><button class="btn btn-info" data-toggle="modal">删除</button></a>
+        </td>
+        <td ></td>
+    </tr>
+    </tbody>
+
+    <table border="0" align="center" >
+        <tr id="pageTo">
+            <td th:text="'第'+${talentPageBean.page}+'页/共'+${talentPageBean.totalPage}+'页'"></td>
+            <td id="first"><a href="/talent/1">首页</a></td>
+            <td><a th:href="@{/talent(pages=${talentPageBean.page-1},query=${talentPageBean.query})}">上一页</a></td>
+            <td><a th:href="@{/talent(pages=${talentPageBean.page+1},query=${talentPageBean.query})}">下一页</a></td>
+            <td><a th:href="@{/talent(pages=${talentPageBean.totalPage})}">最后一页</a></td>
+            <td>转到第:<input type="text" name="pages" size="3">页<input type="submit" value="GO" name="cndok"></td>
+        </tr>
+    </table>
+
+</table>
+<script src="assets/vendor/jquery/jquery.min.js"></script>
+<script src="assets/vendor/bootstrap/js/bootstrap.min.js"></script>
+<script src="assets/vendor/jquery-slimscroll/jquery.slimscroll.min.js"></script>
+<script src="assets/vendor/jquery.easy-pie-chart/jquery.easypiechart.min.js"></script>
+<script src="assets/vendor/chartist/js/chartist.min.js"></script>
+<script src="assets/scripts/klorofil-common.js"></script>
+<script>
+
+</script>
+</body>
+</html>

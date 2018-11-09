@@ -1,0 +1,19 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.neusoft.hr.business.responsitory.DepartmentDao">
+    <resultMap id="selectDepart" type="com.neusoft.hr.business.entity.Department" >
+        <id column="id" property="id"></id>
+        <result column="depart_type" property="departType"></result>
+        <result column="depart_code" property="departCode"></result>
+        <result column="depart_phone" property="departPhone"></result>
+        <result column="depart_name" property="departName"></result>
+    </resultMap>
+    <select id="queryAllDepartment" resultMap="selectDepart" >
+
+        select * from departments
+        <if test="name!=null and name!=''">
+            where depart_name like '%'#{name}'%'
+        </if>
+    </select>
+</mapper>
